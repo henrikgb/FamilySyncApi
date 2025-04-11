@@ -402,3 +402,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/obj/FamilySyncApi.csproj.nuget.dgspec.json
+/obj/project.assets.json
+/obj/project.nuget.cache
+/obj/FamilySyncApi.csproj.nuget.dgspec.json
+/obj/project.assets.json
+/obj/project.nuget.cache
