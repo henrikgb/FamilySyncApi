@@ -1,0 +1,6 @@
+@FamilySyncApi_HostAddress = http://localhost:5018
+
+GET {{FamilySyncApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
