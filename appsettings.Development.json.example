@@ -1,0 +1,12 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AzureBlobStorage": {
+    "ConnectionString": "YOUR_CONNECTION_STRING_HERE",
+    "ContainerName": "YOUR_CONTAINER_NAME_HERE"
+  }
+}
