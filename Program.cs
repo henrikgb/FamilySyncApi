@@ -7,8 +7,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Register strongly typed AzureBlobStorageSettings from configuration
-builder.Services.Configure<AzureBlobStorageSettings>(
-    builder.Configuration.GetSection("AzureBlobStorage"));
+builder.Services.Configure<AzureBlobStorageSettings>(options =>
+{
+    // Bind "AzureBlobStorage" section from config (for local/dev)
+    builder.Configuration.GetSection("AzureBlobStorage").Bind(options);
+
+    // Override ContainerName from environment variable if exists
+    var containerNameFromEnv = builder.Configuration["AzureBlobStorageContainerName"];
+    if (!string.IsNullOrWhiteSpace(containerNameFromEnv))
+    {
+        options.ContainerName = containerNameFromEnv;
+    }
+});
+
 
 // Register repository
 builder.Services.AddScoped(typeof(IBlobStorageRepository<>), typeof(BlobStorageRepository<>));
