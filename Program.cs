@@ -15,7 +15,7 @@ builder.Services.Configure<AzureBlobStorageSettings>(options =>
 
     var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
 
-    var connectionStringFromEnv = builder.Configuration.GetConnectionString("AzureBlobStorage__ConnectionString");
+    var connectionStringFromEnv = builder.Configuration.GetConnectionString("AzureBlobStorage");
     if (!string.IsNullOrWhiteSpace(connectionStringFromEnv))
     {
         logger.LogInformation("Using ConnectionString from Azure Connection Strings section.");
