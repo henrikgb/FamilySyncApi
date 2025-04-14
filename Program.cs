@@ -3,19 +3,29 @@ using FamilySyncApi.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddConsole();
+
 // Add services to the container.
 builder.Services.AddControllers();
 
 // Register strongly typed AzureBlobStorageSettings from configuration
 builder.Services.Configure<AzureBlobStorageSettings>(options =>
 {
-    // Bind "AzureBlobStorage" section from config (for local/dev)
     builder.Configuration.GetSection("AzureBlobStorage").Bind(options);
 
-    // Override ContainerName from environment variable if exists
+    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
+
+    var connectionStringFromEnv = builder.Configuration["AzureBlobStorage__ConnectionString"];
+    if (!string.IsNullOrWhiteSpace(connectionStringFromEnv))
+    {
+        logger.LogInformation("Using ConnectionString from environment variable.");
+        options.ConnectionString = connectionStringFromEnv;
+    }
+
     var containerNameFromEnv = builder.Configuration["AzureBlobStorageContainerName"];
     if (!string.IsNullOrWhiteSpace(containerNameFromEnv))
     {
+        logger.LogInformation("Using ContainerName from environment variable.");
         options.ContainerName = containerNameFromEnv;
     }
 });
