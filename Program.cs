@@ -15,11 +15,15 @@ builder.Services.Configure<AzureBlobStorageSettings>(options =>
 
     var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
 
-    var connectionStringFromEnv = builder.Configuration["AzureBlobStorage__ConnectionString"];
+    var connectionStringFromEnv = builder.Configuration.GetConnectionString("AzureBlobStorage__ConnectionString");
     if (!string.IsNullOrWhiteSpace(connectionStringFromEnv))
     {
-        logger.LogInformation("Using ConnectionString from environment variable.");
+        logger.LogInformation("Using ConnectionString from Azure Connection Strings section.");
         options.ConnectionString = connectionStringFromEnv;
+    }
+    else
+    {
+        logger.LogWarning("AzureBlobStorage__ConnectionString is missing or empty!");
     }
 
     var containerNameFromEnv = builder.Configuration["AzureBlobStorageContainerName"];
@@ -29,6 +33,7 @@ builder.Services.Configure<AzureBlobStorageSettings>(options =>
         options.ContainerName = containerNameFromEnv;
     }
 });
+
 
 
 // Register repository
