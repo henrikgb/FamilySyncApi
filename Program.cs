@@ -11,30 +11,16 @@ builder.Services.AddControllers();
 // Register strongly typed AzureBlobStorageSettings from configuration
 builder.Services.Configure<AzureBlobStorageSettings>(options =>
 {
+    // Bind from appsettings.development.json or environment variables
     builder.Configuration.GetSection("AzureBlobStorage").Bind(options);
 
-    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
-
-    var connectionStringFromEnv = builder.Configuration.GetConnectionString("AzureBlobStorage");
-    if (!string.IsNullOrWhiteSpace(connectionStringFromEnv))
-    {
-        logger.LogInformation("Using ConnectionString from Azure Connection Strings section.");
-        options.ConnectionString = connectionStringFromEnv;
-    }
-    else
-    {
-        logger.LogWarning("AzureBlobStorage__ConnectionString is missing or empty!");
-    }
-
+    // Manually override ContainerName from environment variable (App settings)
     var containerNameFromEnv = builder.Configuration["AzureBlobStorageContainerName"];
     if (!string.IsNullOrWhiteSpace(containerNameFromEnv))
     {
-        logger.LogInformation("Using ContainerName from environment variable.");
         options.ContainerName = containerNameFromEnv;
     }
 });
-
-
 
 // Register repository
 builder.Services.AddScoped(typeof(IBlobStorageRepository<>), typeof(BlobStorageRepository<>));
