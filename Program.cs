@@ -46,20 +46,20 @@ builder.Services.AddSwaggerGen();
 // Allow CORS for local frontend + potential future prod frontend
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhostFrontend", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-                "http://localhost:9000",                         // Local dev
-                "https://your-frontend-url.azurestaticapps.net"  // Deployed static web app
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+            "http://localhost:9000", // Local dev
+            "https://familysync-frontend.azurestaticapps.net" // Your deployed frontend
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 
 var app = builder.Build();
 
-app.UseCors("AllowLocalhostFrontend");
+app.UseCors("AllowFrontend");
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
