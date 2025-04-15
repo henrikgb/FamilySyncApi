@@ -43,7 +43,23 @@ builder.Services.AddScoped(typeof(IBlobStorageRepository<>), typeof(BlobStorageR
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Allow CORS for local frontend + potential future prod frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhostFrontend", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:9000",                         // Local dev
+                "https://your-frontend-url.azurestaticapps.net"  // Deployed static web app
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowLocalhostFrontend");
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
