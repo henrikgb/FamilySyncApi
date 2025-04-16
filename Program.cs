@@ -50,7 +50,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://localhost:9000", // Local dev
-            "https://familysync-frontend.azurestaticapps.net" // Your deployed frontend
+            "https://yellow-sea-0e75e7e03.6.azurestaticapps.net" // Deployed frontend
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
