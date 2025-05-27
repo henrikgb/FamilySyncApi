@@ -52,9 +52,12 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
     var clientId = builder.Configuration["AzureAd:ClientId"];
     var expectedAudience = $"api://{clientId}";
 
-    Console.WriteLine($"Expecting audience: {expectedAudience}");
-
-    options.TokenValidationParameters.ValidAudience = expectedAudience;
+    options.MapInboundClaims = false;
+    options.TokenValidationParameters.ValidAudiences = new[]
+    {
+        expectedAudience, 
+        clientId          
+    };
     options.TokenValidationParameters.RoleClaimType = "roles";
 });
 
