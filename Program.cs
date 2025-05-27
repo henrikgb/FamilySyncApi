@@ -54,15 +54,20 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
     var clientId = builder.Configuration["AzureAd:ClientId"];
     var expectedAudience = $"api://{clientId}";
 
+    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("Configuring valid audiences...");
+    logger.LogInformation("AzureAd:ClientId = {ClientId}", clientId);
+    logger.LogInformation("ExpectedAudience = {ExpectedAudience}", expectedAudience);
+    logger.LogInformation("Valid audiences configured: {audiences}", string.Join(", ", new[] { expectedAudience, clientId }));
+
     options.MapInboundClaims = false;
     options.TokenValidationParameters.ValidAudiences = new[]
     {
-        expectedAudience, 
-        clientId          
+        expectedAudience,
+        clientId
     };
     options.TokenValidationParameters.RoleClaimType = "roles";
 });
-
 
 // Authorization
 builder.Services.AddAuthorization();
@@ -80,8 +85,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-            "http://localhost:9000", // Local dev
-            "https://yellow-sea-0e75e7e03.6.azurestaticapps.net" // Deployed
+            "http://localhost:9000",
+            "https://yellow-sea-0e75e7e03.6.azurestaticapps.net"
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
@@ -105,11 +110,13 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Middleware to log claims
 app.Use(async (context, next) =>
 {
+    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+
     if (context.User.Identity?.IsAuthenticated == true)
     {
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
         logger.LogInformation("Authenticated user: {Name}", context.User.Identity.Name);
 
         foreach (var claim in context.User.Claims)
@@ -119,13 +126,11 @@ app.Use(async (context, next) =>
     }
     else
     {
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
         logger.LogWarning("Unauthenticated request to: {Path}", context.Request.Path);
     }
 
     await next();
 });
-
 
 // Map controllers
 app.MapControllers();
