@@ -47,7 +47,6 @@ builder.Services.Configure<AzureBlobStorageSettings>(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
-// Manually configure valid audiences to match the token
 builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
     var clientId = builder.Configuration["AzureAd:ClientId"];
@@ -59,6 +58,8 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
         clientId,
         $"api://{clientId}"
     };
+
+    options.TokenValidationParameters.RoleClaimType = "roles";
 });
 
 // Authorization
