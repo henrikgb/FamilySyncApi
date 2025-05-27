@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FamilySyncApi.Controllers;
 
-[Authorize]
+[Authorize(Roles = "FamilySyncUser")]
 [ApiController]
 [Route("api/[controller]")]
 public class TodoListController : ControllerBase
