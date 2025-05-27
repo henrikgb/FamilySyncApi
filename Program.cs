@@ -52,14 +52,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
     var clientId = builder.Configuration["AzureAd:ClientId"];
+    var audienceFromEnv = builder.Configuration["AzureAd:Audience"];
+    var expectedAudience = $"api://{clientId}";
 
     var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Configuring valid audience...");
+    logger.LogInformation("Configuring valid audiences...");
     logger.LogInformation("AzureAd:ClientId = {ClientId}", clientId);
-    logger.LogInformation("Valid audience configured: {audience}", clientId);
+    logger.LogInformation("ExpectedAudience = {ExpectedAudience}", expectedAudience);
+    logger.LogInformation("AudienceFromEnv = {AudienceFromEnv}", audienceFromEnv);
 
     options.MapInboundClaims = false;
-    options.TokenValidationParameters.ValidAudience = clientId; // Only the GUID
+    options.TokenValidationParameters.ValidAudiences = new[]
+    {
+        expectedAudience,   // "api://<clientId>"
+        clientId,           // "<clientId>"
+        audienceFromEnv     // fallback til det som ligger i AzureAd__Audience hvis det er satt
+    };
     options.TokenValidationParameters.RoleClaimType = "roles";
 });
 
