@@ -3,9 +3,11 @@ using FamilySyncApi.Settings;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Logging;
 
 // Load .env variables early
 Env.Load();
+IdentityModelEventSource.ShowPII = true;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,6 +104,28 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity?.IsAuthenticated == true)
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogInformation("Authenticated user: {Name}", context.User.Identity.Name);
+
+        foreach (var claim in context.User.Claims)
+        {
+            logger.LogInformation("Claim: {Type} = {Value}", claim.Type, claim.Value);
+        }
+    }
+    else
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning("Unauthenticated request to: {Path}", context.Request.Path);
+    }
+
+    await next();
+});
+
 
 // Map controllers
 app.MapControllers();
