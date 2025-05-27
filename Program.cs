@@ -50,10 +50,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
     var clientId = builder.Configuration["AzureAd:ClientId"];
-    options.TokenValidationParameters.ValidAudience = $"api://{clientId}";
+    var expectedAudience = $"api://{clientId}";
 
+    Console.WriteLine($"Expecting audience: {expectedAudience}");
+
+    options.TokenValidationParameters.ValidAudience = expectedAudience;
     options.TokenValidationParameters.RoleClaimType = "roles";
 });
+
 
 // Authorization
 builder.Services.AddAuthorization();
