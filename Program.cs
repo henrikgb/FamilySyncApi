@@ -63,7 +63,7 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
     options.MapInboundClaims = false;
     options.TokenValidationParameters.ValidAudiences = new[]
     {
-        expectedAudience,
+        // expectedAudience, Removed temporarily
         clientId
     };
     options.TokenValidationParameters.RoleClaimType = "roles";
