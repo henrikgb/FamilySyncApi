@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FamilySyncApi.Controllers;
 
-[Authorize(Roles = "FamilySyncUser")]
+[Authorize(Roles = "CalendarUser")]
 [ApiController]
 [Route("api/[controller]")]
 public class CalendarScheduleController : ControllerBase

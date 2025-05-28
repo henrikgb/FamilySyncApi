@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FamilySyncApi.Controllers;
 
-[Authorize(Roles = "FamilySyncUser")]
+[Authorize(Roles = "ShoppingListUser")]
 [ApiController]
 [Route("api/[controller]")]
 public class ShoppingListController : ControllerBase
