@@ -64,9 +64,7 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
     options.MapInboundClaims = false;
     options.TokenValidationParameters.ValidAudiences = new[]
     {
-        expectedAudience,   // "api://<clientId>"
-        clientId,           // "<clientId>"
-        audienceFromEnv     // fallback til det som ligger i AzureAd__Audience hvis det er satt
+        audienceFromEnv     
     };
     options.TokenValidationParameters.RoleClaimType = "roles";
 });
