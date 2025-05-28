@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Logging;
 
 // Load .env variables early
 Env.Load();
-IdentityModelEventSource.ShowPII = true;
+IdentityModelEventSource.ShowPII = false;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,20 +51,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
-    var clientId = builder.Configuration["AzureAd:ClientId"];
     var audienceFromEnv = builder.Configuration["AzureAd:Audience"];
-    var expectedAudience = $"api://{clientId}";
-
-    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Configuring valid audiences...");
-    logger.LogInformation("AzureAd:ClientId = {ClientId}", clientId);
-    logger.LogInformation("ExpectedAudience = {ExpectedAudience}", expectedAudience);
-    logger.LogInformation("AudienceFromEnv = {AudienceFromEnv}", audienceFromEnv);
 
     options.MapInboundClaims = false;
     options.TokenValidationParameters.ValidAudiences = new[]
     {
-        audienceFromEnv     
+        audienceFromEnv
     };
     options.TokenValidationParameters.RoleClaimType = "roles";
 });
